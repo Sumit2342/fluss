@@ -81,7 +81,8 @@ public final class Schema implements Serializable {
         this.columns =
                 normalizeColumns(columns, primaryKey, autoIncrementColumnNames, highestFieldId);
         this.primaryKey = primaryKey;
-        this.autoIncrementColumnNames = Collections.unmodifiableList(new ArrayList<>(autoIncrementColumnNames));
+        this.autoIncrementColumnNames =
+                Collections.unmodifiableList(new ArrayList<>(autoIncrementColumnNames));
         // pre-create the row type as it is the most frequently used part of the schema
         this.rowType =
                 new RowType(
