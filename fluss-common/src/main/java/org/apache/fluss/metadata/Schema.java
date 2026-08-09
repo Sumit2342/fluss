@@ -81,7 +81,7 @@ public final class Schema implements Serializable {
         this.columns =
                 normalizeColumns(columns, primaryKey, autoIncrementColumnNames, highestFieldId);
         this.primaryKey = primaryKey;
-        this.autoIncrementColumnNames = autoIncrementColumnNames;
+        this.autoIncrementColumnNames = Collections.unmodifiableList(new ArrayList<>(autoIncrementColumnNames));
         // pre-create the row type as it is the most frequently used part of the schema
         this.rowType =
                 new RowType(
@@ -144,10 +144,8 @@ public final class Schema implements Serializable {
 
     /** Returns the primary key indexes, if any, otherwise returns an empty array. */
     public int[] getPrimaryKeyIndexes() {
-        final List<String> columns = getColumnNames();
         return getPrimaryKey()
-                .map(pk -> pk.columnNames)
-                .map(pkColumns -> pkColumns.stream().mapToInt(columns::indexOf).toArray())
+                .map(pk -> getColumnIndexes(pk.getColumnNames()))
                 .orElseGet(() -> new int[0]);
     }
 
@@ -700,7 +698,7 @@ public final class Schema implements Serializable {
 
         public PrimaryKey(String constraintName, List<String> columnNames) {
             this.constraintName = constraintName;
-            this.columnNames = columnNames;
+            this.columnNames = Collections.unmodifiableList(new ArrayList<>(columnNames));
         }
 
         public String getConstraintName() {
